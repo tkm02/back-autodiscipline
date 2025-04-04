@@ -1,0 +1,37 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+model Utilisateur {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  email     String     @unique
+  nom       String?
+  password  String
+  objectifs Objectif[]
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+}
+
+model Objectif {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  nom           String
+  categorie     String
+  typeDeTracking String
+  frequence     String
+  cible         Float?
+  description   String?
+  progression   Json     @default("{}")
+  utilisateurId String   @db.ObjectId
+  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
