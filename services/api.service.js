@@ -103,6 +103,14 @@ export const objectifService = {
     })
   },
 
+  // Mettre à jour le statut d'un objectif
+  updateStatut: async (id, statut) => {
+    return fetchWithAuth(`/objectifs/${id}/statut`, {
+      method: "PATCH",
+      body: JSON.stringify({ statut }),
+    })
+  },
+
   // Mettre à jour la progression d'un objectif
   updateProgression: async (id, date, valeur) => {
     return fetchWithAuth(`/objectifs/${id}/progression`, {
@@ -111,10 +119,191 @@ export const objectifService = {
     })
   },
 
+  // Ajouter ou mettre à jour un commentaire pour un objectif
+  updateCommentaire: async (id, date, commentaire) => {
+    return fetchWithAuth(`/objectifs/${id}/commentaire`, {
+      method: "PATCH",
+      body: JSON.stringify({ date, commentaire }),
+    })
+  },
+
   // Supprimer un objectif
   deleteObjectif: async (id) => {
     return fetchWithAuth(`/objectifs/${id}`, {
       method: "DELETE",
+    })
+  },
+}
+
+// Service de gestion des ressources
+export const ressourceService = {
+  // Récupérer toutes les ressources d'un objectif
+  getRessources: async (objectifId) => {
+    return fetchWithAuth(`/objectifs/${objectifId}/ressources`)
+  },
+
+  // Récupérer une ressource par ID
+  getRessource: async (id) => {
+    return fetchWithAuth(`/ressources/${id}`)
+  },
+
+  // Créer une nouvelle ressource
+  createRessource: async (objectifId, ressource) => {
+    return fetchWithAuth(`/objectifs/${objectifId}/ressources`, {
+      method: "POST",
+      body: JSON.stringify(ressource),
+    })
+  },
+
+  // Mettre à jour une ressource
+  updateRessource: async (id, ressource) => {
+    return fetchWithAuth(`/ressources/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(ressource),
+    })
+  },
+
+  // Supprimer une ressource
+  deleteRessource: async (id) => {
+    return fetchWithAuth(`/ressources/${id}`, {
+      method: "DELETE",
+    })
+  },
+}
+
+// Service de gestion du Coran
+export const coranService = {
+  // Récupérer les sourates du Coran
+  getSourates: async () => {
+    return fetchWithAuth("/coran/sourates")
+  },
+
+  // Récupérer les versets d'une sourate
+  getVersets: async (sourate) => {
+    return fetchWithAuth(`/coran/sourates/${sourate}`)
+  },
+
+  // Récupérer un verset spécifique
+  getVerset: async (sourate, verset) => {
+    return fetchWithAuth(`/coran/sourates/${sourate}/versets/${verset}`)
+  },
+
+  // Rechercher dans le Coran
+  rechercherCoran: async (query) => {
+    return fetchWithAuth(`/coran/recherche?q=${encodeURIComponent(query)}`)
+  },
+}
+
+// Service de gestion de la culture islamique
+export const cultureService = {
+  // Récupérer tous les articles
+  getArticles: async (categorie) => {
+    const url = categorie ? `/culture?categorie=${encodeURIComponent(categorie)}` : "/culture"
+    return fetchWithAuth(url)
+  },
+
+  // Récupérer un article par ID
+  getArticle: async (id) => {
+    return fetchWithAuth(`/culture/${id}`)
+  },
+}
+
+// Service de gestion de l'IA et des conversations
+export const iaService = {
+  // Récupérer toutes les conversations
+  getConversations: async () => {
+    return fetchWithAuth("/conversations")
+  },
+
+  // Récupérer une conversation par ID 
+  getConversation: async (id) => {
+    return fetchWithAuth(`/conversations/${id}`)
+  },
+
+  // Créer une nouvelle conversation
+  createConversation: async (objectifId) => {
+    return fetchWithAuth("/conversations", {
+      method: "POST",
+      body: JSON.stringify({ objectifId }),
+    })
+  },
+
+  // Ajouter un message à une conversation
+  addMessage: async (id, message) => {
+    return fetchWithAuth(`/conversations/${id}/messages`, {
+      method: "POST",
+      body: JSON.stringify({ message }),
+    })
+  },
+
+  // Supprimer une conversation
+  deleteConversation: async (id) => {
+    return fetchWithAuth(`/conversations/${id}`, {
+      method: "DELETE",
+    }) 
+  },
+
+  // Obtenir des suggestions pour un objectif
+  getSuggestions: async (objectifId) => {
+    return fetchWithAuth(`/objectifs/${objectifId}/suggestions`)
+  },
+
+  // Obtenir des actualités liées à un objectif
+  getActualites: async (objectifId) => {
+    return fetchWithAuth(`/objectifs/${objectifId}/actualites`)
+  },
+}
+
+// Service de gestion des finances
+export const financeService = {
+  // Récupérer toutes les finances
+  getFinances: async () => {
+    return fetchWithAuth("/finances")
+  },
+
+  // Récupérer une finance par ID
+  getFinance: async (id) => {
+    return fetchWithAuth(`/finances/${id}`)
+  },
+
+  // Créer une nouvelle finance
+  createFinance: async (finance) => {
+    return fetchWithAuth("/finances", {
+      method: "POST",
+      body: JSON.stringify(finance),
+    })
+  },
+
+  // Mettre à jour une finance
+  updateFinance: async (id, finance) => {
+    return fetchWithAuth(`/finances/${id}`, {
+      method: "PUT",
+      body: JSON.stringify(finance),
+    })
+  },
+
+  // Supprimer une finance
+  deleteFinance: async (id) => {
+    return fetchWithAuth(`/finances/${id}`, {
+      method: "DELETE",
+    })
+  },
+
+  // Récupérer les statistiques financières
+  getFinanceStats: async () => {
+    return fetchWithAuth("/finances/stats")
+  },
+
+  // Récupérer les paramètres de l'utilisateur
+  getParametres: async () => {
+    return fetchWithAuth("/finances/parametres")
+  },
+
+  // Mettre à jour les paramètres de l'utilisateur
+  updateParametres: async (parametres) => {
+    return fetchWithAuth("/finances/parametres", {
+      method: "PUT",
+      body: JSON.stringify(parametres),
     })
   },
 }

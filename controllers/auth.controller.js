@@ -97,6 +97,7 @@ exports.login = asyncHandler(async (req, res) => {
 // @route   GET /api/auth/me
 // @access  Privé
 exports.getMe = asyncHandler(async (req, res) => {
+
   const utilisateur = await prisma.utilisateur.findUnique({
     where: { id: req.utilisateur.id },
     select: {

@@ -13,7 +13,7 @@ exports.tokenFromUrl = async (req, res, next) => {
 
   // Vérifier si un token est présent dans l'URL
   const token = req.query.token
-
+    // console.log("Token from URL:", token)
   if (!token) {
     return res.status(401).json({
       success: false,

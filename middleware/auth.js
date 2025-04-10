@@ -5,11 +5,13 @@ const config = require("../config/config")
 const prisma = new PrismaClient()
 
 exports.protect = async (req, res, next) => {
-  let token
+  let token;
 
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-    token = req.headers.authorization.split(" ")[1]
+
+  if ((req.headers.authorization && req.headers.authorization.startsWith("Bearer")) || req.query.token) {
+    token =  req.query.token || req.headers.authorization.split(" ")[1] 
   }
+
 
   if (!token) {
     return res.status(401).json({
@@ -22,10 +24,13 @@ exports.protect = async (req, res, next) => {
     // Vérifier le token
     const decoded = jwt.verify(token, config.jwtSecret)
 
+
     // Récupérer l'utilisateur
     const utilisateur = await prisma.utilisateur.findUnique({
-      where: { id: decoded.id },
+      where: { id: String(decoded.id ) },
     })
+    // console.log("Decoded token:", decoded) 
+    // console.log("Utilisateur:", utilisateur)
 
     if (!utilisateur) {
       return res.status(401).json({

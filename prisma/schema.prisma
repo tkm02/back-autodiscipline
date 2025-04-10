@@ -11,27 +11,106 @@ datasource db {
 }
 
 model Utilisateur {
-  id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  email     String     @unique
-  nom       String?
-  password  String
-  objectifs Objectif[]
-  createdAt DateTime   @default(now())
-  updatedAt DateTime   @updatedAt
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
+  nom           String
+  email         String         @unique
+  password      String
+  role          String         @default("utilisateur")
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  objectifs     Objectif[]
+  finances      Finance[]
+  parametres    Parametre?
+  conversations Conversation[]
 }
 
 model Objectif {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  id            String         @id @default(auto()) @map("_id") @db.ObjectId
   nom           String
   categorie     String
   typeDeTracking String
   frequence     String
   cible         Float?
   description   String?
-  progression   Json     @default("{}")
-  utilisateurId String   @db.ObjectId
-  utilisateur   Utilisateur @relation(fields: [utilisateurId], references: [id])
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  statut        String         @default("en_cours")
+  progression   Json           @default("{}")
+  commentaires  Json           @default("{}")
+  duree         Int            @default(90)  // Durée en jours (par défaut 90 jours)
+  dateDebut     String?        // Date de début au format YYYY-MM-DD
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  utilisateurId String         @db.ObjectId
+  utilisateur   Utilisateur    @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+  ressources    Ressource[]
+  conversations Conversation[]
 }
 
+model Ressource {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  titre       String
+  type        String     // lien, video, image, document, audio
+  url         String
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  objectifId  String     @db.ObjectId
+  objectif    Objectif   @relation(fields: [objectifId], references: [id], onDelete: Cascade)
+}
+
+model Finance {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  nom         String
+  type        String     // revenu, depense, epargne, investissement
+  montant     Float
+  devise      String     @default("FCFA")
+  date        DateTime
+  categorie   String?
+  description String?
+  recurrent   Boolean    @default(false)
+  frequence   String?    // quotidien, hebdomadaire, mensuel, trimestriel, annuel
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  utilisateurId String   @db.ObjectId
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+}
+
+model Parametre {
+  id             String     @id @default(auto()) @map("_id") @db.ObjectId
+  deviseParDefaut String     @default("FCFA")
+  theme          String     @default("light")
+  langue         String     @default("fr")
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+  utilisateurId  String     @db.ObjectId @unique
+  utilisateur    Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+}
+
+model Conversation {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  messages    Json       @default("[]")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  objectifId  String?    @db.ObjectId
+  objectif    Objectif?  @relation(fields: [objectifId], references: [id], onDelete: SetNull)
+  utilisateurId String   @db.ObjectId
+  utilisateur Utilisateur @relation(fields: [utilisateurId], references: [id], onDelete: Cascade)
+}
+
+model VersetCoran {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  sourate     Int
+  verset      Int
+  texteArabe  String
+  texteFrancais String
+  audio       String?
+}
+
+model ArticleCultureIslamique {
+  id          String   @id @default(auto()) @map("_id") @db.ObjectId
+  titre       String
+  contenu     String
+  categorie   String
+  image       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
